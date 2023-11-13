@@ -84,6 +84,20 @@ dataframe8 = pd.read_excel(
     usecols='A:H',
     nrows=7)
 
+dataframe9 = pd.read_excel(
+    io='RLFS Tables_ Annual_2022.xlsx',
+    engine='openpyxl', 
+    sheet_name='Table 53', 
+    skiprows=1,
+    usecols='A:J',
+    nrows=36)
+
+# Define the provinces
+provinces = ['City of Kigali', 'South province', 'West Province', 'North Province', 'East province ']
+
+# Create two separate DataFrames for provinces and districts
+dataset_provinces = dataframe9[dataframe9['Area'].isin(provinces)]
+dataset_districts = dataframe9[~dataframe9['Area'].isin(provinces)]
 
 # data1 = population_education.iloc[:, :]
 # data2 = df_sheet2.iloc[:, 3:]
@@ -342,6 +356,70 @@ with unemplyed_population_stats:
         selected_column = st.selectbox("Select column for Y-axis:", common_columns, index=0)  # Default to 'Total'
         st.plotly_chart(create_bar_chart(dataframe8, 'Duration', selected_column))
 
+
+
+# LINE CHART FROM LABOUR FORCE INDICATORS BY DISTRICTS OR PROVINCES
+# Multiselect box for selecting columns
+selected_columns = st.multiselect("Select Labour Force Indicators To View Summary: ", dataframe9.columns[1:4])
+
+# Selectbox for choosing between provinces and districts
+selected_area_type = st.selectbox("Select Area Type", ['Provinces', 'Districts'])
+
+# Filter data based on the selected area type
+if selected_area_type == 'Provinces':
+    selected_data = dataset_provinces
+else:
+    selected_data = dataset_districts
+
+# Line chart
+if selected_columns and not selected_data.empty:
+    fig_line = px.line(
+        selected_data,
+        x='Area',
+        y=selected_columns,
+        title=f'Line Chart for {", ".join(selected_columns)} in {selected_area_type}',
+        labels={'Area': 'Area', 'value': 'Value'},
+    )
+
+    # Customize the layout if needed
+    fig_line.update_layout(
+        height=500,
+        width=800,
+        legend_title_text='Category',
+        legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1),
+    )
+
+    # Show the line chart
+    st.plotly_chart(fig_line)
+else:
+    st.warning("Select at least one column and make sure the dataset is not empty.")
+
+
+
+remaining_columns = st.multiselect("Select Other Labour force indicators: ", dataframe9.columns[4:])
+
+# Line chart for other labour force indicators
+if remaining_columns and not selected_data.empty:
+    fig_remaining_columns = px.line(
+        selected_data,
+        x='Area',
+        y=remaining_columns,
+        title=f'Line Chart for {", ".join(remaining_columns)} in {selected_area_type}',
+        labels={'Area': 'Area', 'value': 'Value'},
+    )
+
+    # Customize the layout if needed
+    fig_remaining_columns.update_layout(
+        height=500,
+        width=800,
+        legend_title_text='Category',
+        legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1),
+    )
+
+    # Show the line chart for remaining columns
+    st.plotly_chart(fig_remaining_columns)
+else:
+    st.warning("Select at least one column and make sure the dataset is not empty.")
 
 
 
