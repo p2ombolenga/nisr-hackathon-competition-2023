@@ -51,6 +51,17 @@ dataframe4 = pd.read_excel(
     usecols='A:H',
     nrows=10)
 
+
+# DATA FRAME FOR EMPLOYES AND Duration Employement Contract
+dataframe5 = pd.read_excel(
+    io='RLFS Tables_ Annual_2022.xlsx',
+    engine='openpyxl', 
+    sheet_name='Table 22-23-24', 
+    skiprows=26,
+    usecols='A:H',
+    nrows=9)
+
+
 # data1 = population_education.iloc[:, :]
 # data2 = df_sheet2.iloc[:, 3:]
 
@@ -83,7 +94,6 @@ data3_selection = dataframe3.query("Education == @education")
 st.subheader(":briefcase: RWANDA LABOR FORCE 2022 ANALYSIS")
 st.markdown("##")
 
-
 # OVERVIEW KPI'S
 
 working_age_population = 0
@@ -102,34 +112,30 @@ if len(education) > 0:
     outside_labour_force = int(data1_selection['Outside labour force'].sum())
     average_employment_rate = data1_selection['Employment-to population ratio'].mean()
     average_unemployment_rate = data1_selection['Unemployment rate'].mean()
+
+    column_one,column_two,column_three,column_four, column_five,column_six = st.columns(6)
+
+    with column_one:
+        st.write("Age 16+ Population")
+        st.subheader(f"{working_age_population:,}")
+    with column_two:
+        st.write("Labour Force")
+        st.subheader(f"{labor_force:,}")
+    with column_three:
+        st.write("Employed")
+        st.subheader(f"{employed:,}")
+    with column_four:
+        st.write("Unemployed")
+        st.subheader(f"{un_employed:,}")
+    with column_five:
+        st.write("Employement Rate")
+        st.subheader(f"{average_employment_rate:.1f}%")
+    with column_six:
+        st.write("Unemployement Rate")
+        st.subheader(f"{average_unemployment_rate:.1f}%")
 else:
-    average_unemployment_rate = 0
-    average_employment_rate = 0
+    st.warning("Select A level of Education to view Overview Of Rwanda Labour Force Data")
 
-
-column_one, column_two, column_three, column_four = st.columns(4)
-
-
-column_one,column_two,column_three,column_four, column_five,column_six = st.columns(6)
-
-with column_one:
-    st.write("Age 16+ Population")
-    st.subheader(f"{working_age_population:,}")
-with column_two:
-    st.write("Labour Force")
-    st.subheader(f"{labor_force:,}")
-with column_three:
-    st.write("Employed")
-    st.subheader(f"{employed:,}")
-with column_four:
-    st.write("Unemployed")
-    st.subheader(f"{un_employed:,}")
-with column_five:
-    st.write("Employement Rate")
-    st.subheader(f"{average_employment_rate:.1f}%")
-with column_six:
-    st.write("Unemployement Rate")
-    st.subheader(f"{average_unemployment_rate:.1f}%")
 
 # Calculate sums
 total_male = data3_selection['Male'].sum()
@@ -161,8 +167,7 @@ if len(education) > 0:
         st.plotly_chart(fig_agriculture)
 
 else:
-    st.warning("Please select at least one level of education to display Gender Distribution, Area of Residence Distribution and Participation in Subsistence Agriculture.")
-
+    pass
 
 
 
@@ -241,6 +246,37 @@ with people_with_disability:
     )
     # Show the chart
     st.plotly_chart(fig)
+
+
+st.markdown("---")
+# CHOOSE FILTER FOR EMPLOYES BY Duration Employmnent Contract
+selected_column = st.sidebar.radio("Select Column for X-axis:", ['Total', 'Male', 'Female', 'Urban', 'Rural'])
+# Exclude "Total employees/paid apprentices 16+" row
+dataframe5_filtered = dataframe5[dataframe5['Duration Employment Contract'] != 'Total employees/paid apprentices 16 +']
+# Create a horizontal bar chart
+fig = px.bar(
+    dataframe5_filtered,
+    x=selected_column,
+    y='Duration Employment Contract',
+    orientation='h',  # Set orientation to horizontal
+    title=f'Duration of Employment Contract by {selected_column}',
+    labels={selected_column: 'Population', 'Duration Employment Contract': 'Contract Duration'},
+)
+
+# Customize the layout if needed
+fig.update_layout(
+    bargap=0.3,
+    bargroupgap=0.1,
+    height=500,
+    width=500,
+    xaxis_title='Population',
+    yaxis_title='Contract Duration',
+)
+# Show the chart
+st.plotly_chart(fig)
+
+
+
 
 
 
