@@ -2,9 +2,7 @@ import pandas as pd
 import streamlit as st
 import plotly.express as px
 
-st.set_page_config(page_title="RWANDA LABOR FORCE SURVEY ANALYSIS",
-                   page_icon=":briefcase:",
-                   layout="wide")
+st.set_page_config(page_title="RWANDA LABOR FORCE SURVEY ANALYSIS", page_icon=":briefcase:", layout="wide")
 
 # Replace the file path with your actual path, and make sure to wrap it in double quotes.
 # excel_file_path = r'C:\Users\CARDX LTD\Desktop\NISR COMPETITION\RLFS Tables_ Annual_2022.xlsx'
@@ -61,6 +59,31 @@ dataframe5 = pd.read_excel(
     usecols='A:H',
     nrows=9)
 
+# UNMPLOYED PEOPLE BY AGE GROUP,SEX,GENDER AND AREA OF RESIDENCE
+dataframe6 = pd.read_excel(
+    io='RLFS Tables_ Annual_2022.xlsx',
+    engine='openpyxl', 
+    sheet_name='Table 38-39', 
+    skiprows=1,
+    usecols='A:H',
+    nrows=7)
+# UNMPLOYED PEOPLE BY LEVEL OF EDUCATION,SEX,GENDER AND AREA OF RESIDENCE
+dataframe7 = pd.read_excel(
+    io='RLFS Tables_ Annual_2022.xlsx',
+    engine='openpyxl', 
+    sheet_name='Table 38-39', 
+    skiprows=10,
+    usecols='A:H',
+    nrows=7)
+# UNMPLOYED PEOPLE BY DURATION OF SEEKING EMPLOYMENT,SEX,GENDER AND AREA OF RESIDENCE
+dataframe8 = pd.read_excel(
+    io='RLFS Tables_ Annual_2022.xlsx',
+    engine='openpyxl', 
+    sheet_name='Table 40-41', 
+    skiprows=19,
+    usecols='A:H',
+    nrows=7)
+
 
 # data1 = population_education.iloc[:, :]
 # data2 = df_sheet2.iloc[:, 3:]
@@ -68,7 +91,7 @@ dataframe5 = pd.read_excel(
 # st.dataframe(population_education)
 
 
-st.sidebar.subheader("For Age 16+: ")
+st.sidebar.subheader("All Workinh Age Population")
 # Get unique education options excluding "Population 16 yrs and over"
 education_options = dataframe1["Education"].unique()
 education_options = [edu for edu in education_options if edu != "Population 16 yrs and over"]
@@ -91,7 +114,7 @@ data3_selection = dataframe3.query("Education == @education")
 
 # ------------ MAIN PAGE -------------------
 
-st.subheader(":briefcase: RWANDA LABOR FORCE 2022 ANALYSIS")
+st.subheader(":briefcase: RWANDA LABOR FORCE 2022 DASHBOARD")
 st.markdown("##")
 
 # OVERVIEW KPI'S
@@ -110,7 +133,7 @@ if len(education) > 0:
     employed = int(data1_selection['Employed'].sum())
     un_employed = int(data1_selection['Unemployed'].sum())
     outside_labour_force = int(data1_selection['Outside labour force'].sum())
-    average_employment_rate = data1_selection['Employment-to population ratio'].mean()
+    average_employment_to_population = data1_selection['Employment-to population ratio'].mean()
     average_unemployment_rate = data1_selection['Unemployment rate'].mean()
 
     column_one,column_two,column_three,column_four, column_five,column_six = st.columns(6)
@@ -128,8 +151,8 @@ if len(education) > 0:
         st.write("Unemployed")
         st.subheader(f"{un_employed:,}")
     with column_five:
-        st.write("Employement Rate")
-        st.subheader(f"{average_employment_rate:.1f}%")
+        st.write("Employement To Population")
+        st.subheader(f"{average_employment_to_population:.1f}%")
     with column_six:
         st.write("Unemployement Rate")
         st.subheader(f"{average_unemployment_rate:.1f}%")
@@ -170,15 +193,12 @@ else:
     pass
 
 
-
-
 st.markdown("---")
 # Exclude 'Disabled Working Age Persons (16+ yrs)'
 dataframe2_filtered = dataframe2[dataframe2['Type of disability'] != 'Disabled working age persons (16+ yrs)']
 
 # Get user input for employment status
-st.sidebar.subheader("Disabled working age persons (16+ yrs): ")
-selected_status = st.sidebar.radio("Select Employment Status", ["All", "Employed", "Unemployed", "Unemployment Rate", "Outside labour force", "Employment Rate", "Labour Force Participation Rate"])
+selected_status = st.sidebar.radio("Filter Disabled working age persons (16+ yrs) By:", ["All", "Employed", "Unemployed", "Unemployment Rate", "Outside labour force", "Employment Rate", "Labour Force Participation Rate"])
 
 # Filter the DataFrame based on the selected status
 if selected_status == "Employed":
@@ -222,18 +242,18 @@ with employed_population:
         x='Occupation Group',
         y=['Male', 'Female', 'Urban', 'Rural'],
         title='Employed By Occupation Gender and residence',
-        labels={'Occupation Group': 'Occupation', 'value': 'Population'},
+        labels={'Occupation Group': 'Occupation Group', 'value': 'Population'},
         line_shape="linear",  # Use "linear" for straight lines
     )
 
     figline.update_layout(
         height=500,
-        width=550,
+        width=400,
         legend_title_text='Category',
         legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1)
     )
 
-    # Show the chart
+    # Show the line chart
     st.plotly_chart(figline)
 
 with people_with_disability:
@@ -242,41 +262,85 @@ with people_with_disability:
     bargap=0.2,
     bargroupgap=0.2,
     height=500,  # Set the height
-    width=550    # Set the width
+    width=400    # Set the width
     )
     # Show the chart
     st.plotly_chart(fig)
 
 
 st.markdown("---")
+
 # CHOOSE FILTER FOR EMPLOYES BY Duration Employmnent Contract
-selected_column = st.sidebar.radio("Select Column for X-axis:", ['Total', 'Male', 'Female', 'Urban', 'Rural'])
-# Exclude "Total employees/paid apprentices 16+" row
-dataframe5_filtered = dataframe5[dataframe5['Duration Employment Contract'] != 'Total employees/paid apprentices 16 +']
-# Create a horizontal bar chart
-fig = px.bar(
-    dataframe5_filtered,
-    x=selected_column,
-    y='Duration Employment Contract',
-    orientation='h',  # Set orientation to horizontal
-    title=f'Duration of Employment Contract by {selected_column}',
-    labels={selected_column: 'Population', 'Duration Employment Contract': 'Contract Duration'},
-)
+selected_column = st.sidebar.radio("Filter Employees Contract Duration By:", ['Total', 'Male', 'Female', 'Urban', 'Rural'])
+employees_contract_duration, unemplyed_population_stats = st.columns(2)
+with employees_contract_duration:
+    # Exclude "Total employees/paid apprentices 16+" row
+    dataframe5_filtered = dataframe5[dataframe5['Duration Employment Contract'] != 'Total employees/paid apprentices 16 +']
+    # Create a horizontal bar chart
+    fig = px.bar(
+        dataframe5_filtered,
+        x=selected_column,
+        y='Duration Employment Contract',
+        orientation='h',  # Set orientation to horizontal
+        title=f'Duration of Employees Contract by {selected_column}',
+        labels={selected_column: 'Population', 'Duration Employment Contract': 'Contract Duration'},
+    )
 
-# Customize the layout if needed
-fig.update_layout(
-    bargap=0.3,
-    bargroupgap=0.1,
-    height=500,
-    width=500,
-    xaxis_title='Population',
-    yaxis_title='Contract Duration',
-)
-# Show the chart
-st.plotly_chart(fig)
+    # Customize the layout if needed
+    fig.update_layout(
+        bargap=0.3,
+        bargroupgap=0.1,
+        height=500,
+        width=400,
+        xaxis_title='Population',
+        yaxis_title='Contract Duration',
+        yaxis=dict(tickangle=-45),  # Rotate the y-axis labels
+    )
+    # Show the chart
+    st.plotly_chart(fig)
+with unemplyed_population_stats:
+        # List of common columns
+    common_columns = ['Total', 'Male', 'Female', 'Urban', 'Rural', 'Participated in subsistence agriculture', 'Not participated  in subsistence agriculture']
+    st.sidebar.subheader("Unemployement stats Filters: ")
+    unemployment_dataframe = st.sidebar.radio("Choose Graph to View", ["By Age Group", "By Education", "By Duration of seeking employment"])
 
+    # Function to filter and create the bar chart
+    def create_bar_chart(dataframe, x_axis_column, y_axis_column):
+        # Exclude 'Unemployed population 16+' rows
+        filtered_dataframe = dataframe[dataframe[x_axis_column] != 'Unemployed population 16+']
 
+        # Create a bar chart
+        fig = px.bar(
+            filtered_dataframe,
+            x=x_axis_column,
+            y=y_axis_column,
+            title=f'Unemployed {y_axis_column} Population and {x_axis_column}',
+            labels={x_axis_column: x_axis_column, y_axis_column: 'Population'},
+        )
 
+        # Customize the layout if needed
+        fig.update_layout(
+            bargap=0.3,
+            bargroupgap=0.1,
+            height=500,
+            width=400,
+            xaxis_title=x_axis_column,
+            yaxis_title='Population',
+        )
+
+        return fig
+
+    if unemployment_dataframe == "By Age Group":
+        selected_column = st.selectbox("Select column for Y-axis:", common_columns, index=0)  # Default to 'Total'
+        st.plotly_chart(create_bar_chart(dataframe6, 'Age Group', selected_column))
+
+    elif unemployment_dataframe == "By Education":
+        selected_column = st.selectbox("Select column for Y-axis:", common_columns, index=0)  # Default to 'Total'
+        st.plotly_chart(create_bar_chart(dataframe7, 'Education', selected_column))
+
+    else:
+        selected_column = st.selectbox("Select column for Y-axis:", common_columns, index=0)  # Default to 'Total'
+        st.plotly_chart(create_bar_chart(dataframe8, 'Duration', selected_column))
 
 
 
@@ -288,6 +352,8 @@ our_style = """
     #MainMenu {visibility: hidden;}
     header {visibility: hidden;}
     footer {visibility: hidden;}
+    /* body {zoom: 90%;} */ /* Zoom out the body to 90% */
+</style>
 </style>
 """
 
