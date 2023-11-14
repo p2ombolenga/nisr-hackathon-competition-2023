@@ -12,86 +12,99 @@ st.set_page_config(page_title="RWANDA LABOR FORCE SURVEY ANALYSIS", page_icon=":
 
 # List all sheet names in the Excel file.
 # sheet_names = xls.sheet_names
+@st.cache_data
+def get_data_from_excel():
+    # Read data from a specific sheet (e.g., 'Sheet1') into a DataFrame.
 
-# Read data from a specific sheet (e.g., 'Sheet1') into a DataFrame.
-
-# SHEET TABLE 13-14
-dataframe1 = pd.read_excel(
-    io='RLFS Tables_ Annual_2022.xlsx',
-    engine='openpyxl', 
-    sheet_name='Table 13-14', 
-    skiprows=1,
-    usecols='A:I',
-    nrows=6)
-
-
-dataframe2 = pd.read_excel(
-    io='RLFS Tables_ Annual_2022.xlsx',
-    engine='openpyxl', 
-    sheet_name='Table 4-5', 
-    skiprows=11,
-    usecols='A:H',
-    nrows=7)
-
-dataframe3 = pd.read_excel(
-    io='RLFS Tables_ Annual_2022.xlsx',
-    engine='openpyxl', 
-    sheet_name='Table 6-7', 
-    skiprows=8,
-    usecols='A:H',
-    nrows=6)
-
-dataframe4 = pd.read_excel(
-    io='RLFS Tables_ Annual_2022.xlsx',
-    engine='openpyxl', 
-    sheet_name='Table 15-16 ', 
-    skiprows=21,
-    usecols='A:H',
-    nrows=10)
+    # SHEET TABLE 13-14
+    dataframe1 = pd.read_excel(
+        io='RLFS Tables_ Annual_2022.xlsx',
+        engine='openpyxl', 
+        sheet_name='Table 13-14', 
+        skiprows=1,
+        usecols='A:I',
+        nrows=6)
 
 
-# DATA FRAME FOR EMPLOYES AND Duration Employement Contract
-dataframe5 = pd.read_excel(
-    io='RLFS Tables_ Annual_2022.xlsx',
-    engine='openpyxl', 
-    sheet_name='Table 22-23-24', 
-    skiprows=26,
-    usecols='A:H',
-    nrows=9)
+    dataframe2 = pd.read_excel(
+        io='RLFS Tables_ Annual_2022.xlsx',
+        engine='openpyxl', 
+        sheet_name='Table 4-5', 
+        skiprows=11,
+        usecols='A:H',
+        nrows=7)
 
-# UNMPLOYED PEOPLE BY AGE GROUP,SEX,GENDER AND AREA OF RESIDENCE
-dataframe6 = pd.read_excel(
-    io='RLFS Tables_ Annual_2022.xlsx',
-    engine='openpyxl', 
-    sheet_name='Table 38-39', 
-    skiprows=1,
-    usecols='A:H',
-    nrows=7)
-# UNMPLOYED PEOPLE BY LEVEL OF EDUCATION,SEX,GENDER AND AREA OF RESIDENCE
-dataframe7 = pd.read_excel(
-    io='RLFS Tables_ Annual_2022.xlsx',
-    engine='openpyxl', 
-    sheet_name='Table 38-39', 
-    skiprows=10,
-    usecols='A:H',
-    nrows=7)
-# UNMPLOYED PEOPLE BY DURATION OF SEEKING EMPLOYMENT,SEX,GENDER AND AREA OF RESIDENCE
-dataframe8 = pd.read_excel(
-    io='RLFS Tables_ Annual_2022.xlsx',
-    engine='openpyxl', 
-    sheet_name='Table 40-41', 
-    skiprows=19,
-    usecols='A:H',
-    nrows=7)
+    dataframe3 = pd.read_excel(
+        io='RLFS Tables_ Annual_2022.xlsx',
+        engine='openpyxl', 
+        sheet_name='Table 6-7', 
+        skiprows=8,
+        usecols='A:H',
+        nrows=6)
 
-dataframe9 = pd.read_excel(
-    io='RLFS Tables_ Annual_2022.xlsx',
-    engine='openpyxl', 
-    sheet_name='Table 53', 
-    skiprows=1,
-    usecols='A:J',
-    nrows=36)
+    dataframe4 = pd.read_excel(
+        io='RLFS Tables_ Annual_2022.xlsx',
+        engine='openpyxl', 
+        sheet_name='Table 15-16 ', 
+        skiprows=21,
+        usecols='A:H',
+        nrows=10)
 
+
+    # DATA FRAME FOR EMPLOYES AND Duration Employement Contract
+    dataframe5 = pd.read_excel(
+        io='RLFS Tables_ Annual_2022.xlsx',
+        engine='openpyxl', 
+        sheet_name='Table 22-23-24', 
+        skiprows=26,
+        usecols='A:H',
+        nrows=9)
+
+    # UNMPLOYED PEOPLE BY AGE GROUP,SEX,GENDER AND AREA OF RESIDENCE
+    dataframe6 = pd.read_excel(
+        io='RLFS Tables_ Annual_2022.xlsx',
+        engine='openpyxl', 
+        sheet_name='Table 38-39', 
+        skiprows=1,
+        usecols='A:H',
+        nrows=7)
+    # UNMPLOYED PEOPLE BY LEVEL OF EDUCATION,SEX,GENDER AND AREA OF RESIDENCE
+    dataframe7 = pd.read_excel(
+        io='RLFS Tables_ Annual_2022.xlsx',
+        engine='openpyxl', 
+        sheet_name='Table 38-39', 
+        skiprows=10,
+        usecols='A:H',
+        nrows=7)
+    # UNMPLOYED PEOPLE BY DURATION OF SEEKING EMPLOYMENT,SEX,GENDER AND AREA OF RESIDENCE
+    dataframe8 = pd.read_excel(
+        io='RLFS Tables_ Annual_2022.xlsx',
+        engine='openpyxl', 
+        sheet_name='Table 40-41', 
+        skiprows=19,
+        usecols='A:H',
+        nrows=7)
+
+    dataframe9 = pd.read_excel(
+        io='RLFS Tables_ Annual_2022.xlsx',
+        engine='openpyxl', 
+        sheet_name='Table 53', 
+        skiprows=1,
+        usecols='A:J',
+        nrows=36)
+    return [
+        dataframe1,
+        dataframe2,
+        dataframe3,
+        dataframe4,
+        dataframe5,
+        dataframe6,
+        dataframe7,
+        dataframe8,
+        dataframe9
+        ]
+
+dataframe1,dataframe2,dataframe3,dataframe4,dataframe5,dataframe6,dataframe7,dataframe8,dataframe9 = get_data_from_excel()
 # Define the provinces
 provinces = ['City of Kigali', 'South province', 'West Province', 'North Province', 'East province ']
 
@@ -104,8 +117,8 @@ dataset_districts = dataframe9[~dataframe9['Area'].isin(provinces)]
 
 # st.dataframe(population_education)
 
-
-st.sidebar.subheader("All Workinh Age Population")
+st.sidebar.header("Apply Filters: ")
+st.sidebar.subheader("All Working Age Population 16+ :")
 # Get unique education options excluding "Population 16 yrs and over"
 education_options = dataframe1["Education"].unique()
 education_options = [edu for edu in education_options if edu != "Population 16 yrs and over"]
@@ -130,6 +143,7 @@ data3_selection = dataframe3.query("Education == @education")
 
 st.subheader(":briefcase: RWANDA LABOR FORCE 2022 DASHBOARD")
 st.markdown("##")
+st.write("OverView For All Working Age Population 16+")
 
 # OVERVIEW KPI'S
 
@@ -207,7 +221,6 @@ else:
     pass
 
 
-st.markdown("---")
 # Exclude 'Disabled Working Age Persons (16+ yrs)'
 dataframe2_filtered = dataframe2[dataframe2['Type of disability'] != 'Disabled working age persons (16+ yrs)']
 
@@ -281,8 +294,6 @@ with people_with_disability:
     # Show the chart
     st.plotly_chart(fig)
 
-
-st.markdown("---")
 
 # CHOOSE FILTER FOR EMPLOYES BY Duration Employmnent Contract
 selected_column = st.sidebar.radio("Filter Employees Contract Duration By:", ['Total', 'Male', 'Female', 'Urban', 'Rural'])
@@ -422,7 +433,7 @@ else:
     st.warning("Select at least one column and make sure the dataset is not empty.")
 
 
-
+st.write("Copyright © Peter NSABIMANA & Eric SIBOMANA")
 
 # HIDE STREAMLIT STYLES
 our_style = """
